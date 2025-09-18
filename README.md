@@ -195,9 +195,7 @@ If you use CellDiffusion in your research, please cite:
 
 ## Support
 
-- Documentation: [Read the Docs](https://celldiffusion.readthedocs.io/)
 - Issues: [GitHub Issues](https://github.com/ShiltonZhang/CellDiffusion/issues)
-- Discussions: [GitHub Discussions](https://github.com/ShiltonZhang/CellDiffusion/discussions)
 
 ## Acknowledgments
 
