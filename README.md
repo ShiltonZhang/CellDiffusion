@@ -186,12 +186,12 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GNU General Public License v3.0 (AGPL-3.0) - see the LICENSE file for details.
 
 ## Citation
 
 If you use CellDiffusion in your research, please cite:
-
+Zhang, X., Mao, J., & Lê Cao, K.-A. (2025). CellDiffusion: a generative model to annotate single-cell and spatial RNA-seq using bulk references. BioRxiv. https://doi.org/10.1101/2025.10.27.684671
 
 ## Support
 
