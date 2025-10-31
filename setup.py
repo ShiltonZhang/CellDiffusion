@@ -8,6 +8,11 @@ this_directory = os.path.abspath(os.path.dirname(__file__))
 
 # Get package version
 version = {}
+version['__name__'] = 'CellDiffusion'
+version['__version__'] = '0.1.0'
+version['__author__'] = 'Xiaochen Zhang'
+version['__email__'] = 'xiaoczhang3@student.unimelb.edu.au'
+
 with open(os.path.join(this_directory, "CellDiffusion", "__init__.py")) as f:
     exec(f.read(), version)
 
