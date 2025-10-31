@@ -190,8 +190,24 @@ This project is licensed under the GNU General Public License v3.0 (AGPL-3.0) - 
 
 ## Citation
 
-If you use CellDiffusion in your research, please cite:
-Zhang, X., Mao, J., & Lê Cao, K.-A. (2025). CellDiffusion: a generative model to annotate single-cell and spatial RNA-seq using bulk references. BioRxiv. https://doi.org/10.1101/2025.10.27.684671
+If you use CellDiffusion in your research, please cite our preprint.
+
+### APA Style
+
+Zhang, X., Mao, J., & Lê Cao, K.-A. (2025). CellDiffusion: a generative model to annotate single-cell and spatial RNA-seq using bulk references. BioRxiv.
+
+### BibTeX
+
+```bibtex
+@article{zhang2025celldiffusion,
+  author = {Zhang, Xiaochen and Mao, Jiadong and L{\^e} Cao, Kim-Anh},
+  title = {{CellDiffusion: a generative model to annotate single-cell and spatial RNA-seq using bulk references}},
+  journal = {bioRxiv},
+  year = {2025},
+  doi = {10.1101/2025.10.27.684671},
+  publisher = {Cold Spring Harbor Laboratory},
+  URL = {[https://www.biorxiv.org/content/10.1101/2025.10.27.684671v1](https://www.biorxiv.org/content/10.1101/2025.10.27.684671v1)}
+}
 
 ## Support
 
