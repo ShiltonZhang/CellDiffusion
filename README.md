@@ -208,6 +208,7 @@ Zhang, X., Mao, J., & Lê Cao, K.-A. (2025). CellDiffusion: a generative model t
   publisher = {Cold Spring Harbor Laboratory},
   URL = {[https://www.biorxiv.org/content/10.1101/2025.10.27.684671v1](https://www.biorxiv.org/content/10.1101/2025.10.27.684671v1)}
 }
+```
 
 ## Support
 
