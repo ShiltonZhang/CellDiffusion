@@ -46,7 +46,6 @@ adata = sc.read_h5ad('your_data.h5ad')
 cd = CellDiffusion(
     image_size=48,          # Reshape to 48x48 (2304 genes)
     timesteps=500,          # Number of diffusion steps
-    epochs=300             # Training epochs
 )
 
 # Preprocess data
@@ -58,7 +57,7 @@ preprocessed_adata = cd.preprocess(
 
 # Train the model
 cd.fit(
-    epochs=300,
+    epochs=300,            # Training epochs
     batch_size=128,
     learning_rate=1e-3
 )
