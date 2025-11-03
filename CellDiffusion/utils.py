@@ -74,7 +74,7 @@ def adata_to_tensor(
     image_size: int = 48,
     cluster_key: Optional[str] = None,
     cluster_value: Optional[str] = None
-) -> Tuple[torch.Tensor, np.ndarray]:
+) -> Tuple[torch.Tensor, np.ndarray, np.ndarray]:
     """
     Convert AnnData object to tensor format suitable for diffusion model.
     
@@ -87,12 +87,14 @@ def adata_to_tensor(
     Returns:
         torch.Tensor: Tensor of shape (n_cells, 1, image_size, image_size)
         np.ndarray: Array of cell indices used
+        np.ndarray: Gene names used (length image_size*image_size, with padding if needed)
     """
     # Get expression data
     if hasattr(adata.X, 'toarray'):
         data = adata.X.toarray()
     else:
         data = adata.X
+    var_names = np.array(adata.var_names)
     
     # Filter by cluster if specified
     if cluster_key is not None and cluster_value is not None:
@@ -110,17 +112,23 @@ def adata_to_tensor(
         # Pad with zeros
         padding = np.zeros((data.shape[0], required_genes - n_genes))
         data = np.concatenate([data, padding], axis=1)
+        # Construct padded gene names
+        pad_names = np.array([f"PAD_{i}" for i in range(required_genes - n_genes)])
+        used_gene_names = np.concatenate([var_names, pad_names])
         warnings.warn(f"Data has {n_genes} genes but requires {required_genes}. Padding with zeros.")
     elif n_genes > required_genes:
         # Take top genes or truncate
         data = data[:, :required_genes]
+        used_gene_names = var_names[:required_genes]
         warnings.warn(f"Data has {n_genes} genes but requires {required_genes}. Truncating to first {required_genes} genes.")
+    else:
+        used_gene_names = var_names
     
     # Reshape to square format
     n_cells = data.shape[0]
     data_tensor = torch.FloatTensor(data).reshape(n_cells, 1, image_size, image_size)
     
-    return data_tensor, cell_indices
+    return data_tensor, cell_indices, used_gene_names
 
 
 def tensor_to_adata(
@@ -128,7 +136,8 @@ def tensor_to_adata(
     original_adata,
     cell_indices: Optional[np.ndarray] = None,
     pseudo_cell_prefix: str = "pseudo_",
-    image_size: int = 48
+    image_size: int = 48,
+    gene_names: Optional[Union[np.ndarray, list]] = None
 ):
     """
     Convert tensor back to AnnData format with pseudo-cell annotations.
@@ -153,21 +162,35 @@ def tensor_to_adata(
     else:
         data = tensor
     
-    # Get the number of genes from original data
-    n_original_genes = original_adata.shape[1]
-    if data.shape[1] > n_original_genes:
-        # Truncate to match original gene count
-        data = data[:, :n_original_genes]
+    # Determine var (genes) to use
+    if gene_names is None:
+        # Fallback: use original adata var_names (truncate if needed)
+        n_original_genes = original_adata.shape[1]
+        if data.shape[1] > n_original_genes:
+            data = data[:, :n_original_genes]
+        var_names_out = np.array(original_adata.var_names[:data.shape[1]])
+    else:
+        gene_names = np.array(gene_names)
+        # Ensure lengths match data dimension
+        if len(gene_names) != data.shape[1]:
+            if len(gene_names) > data.shape[1]:
+                var_names_out = gene_names[:data.shape[1]]
+            else:
+                # pad gene names if somehow shorter
+                pad_needed = data.shape[1] - len(gene_names)
+                pad_names = np.array([f"PAD_{i}" for i in range(pad_needed)])
+                var_names_out = np.concatenate([gene_names, pad_names])
+        else:
+            var_names_out = gene_names
     
     # Create new AnnData object
-    var_names = original_adata.var_names.copy()
     obs_names = [f"{pseudo_cell_prefix}{i}" for i in range(data.shape[0])]
     
     # Create the AnnData object
     pseudo_adata = sc.AnnData(
         X=data,
         obs=pd.DataFrame(index=obs_names),
-        var=original_adata.var.copy()
+        var=pd.DataFrame(index=pd.Index(var_names_out, name=original_adata.var.index.name))
     )
     
     # Add pseudo-cell annotation
@@ -229,7 +252,8 @@ def postprocess_results(
     cell_indices: Optional[np.ndarray] = None,
     combine_with_original: bool = True,
     pseudo_cell_prefix: str = "pseudo_",
-    image_size: int = 48
+    image_size: int = 48,
+    gene_names: Optional[Union[np.ndarray, list]] = None
 ):
     """
     Complete postprocessing pipeline for generated pseudo-cells.
@@ -251,7 +275,8 @@ def postprocess_results(
         original_adata,
         cell_indices=cell_indices,
         pseudo_cell_prefix=pseudo_cell_prefix,
-        image_size=image_size
+        image_size=image_size,
+        gene_names=gene_names
     )
     
     # Combine with original if requested

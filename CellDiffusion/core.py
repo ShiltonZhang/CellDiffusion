@@ -91,6 +91,7 @@ class CellDiffusion:
         self.preprocessed_adata = None
         self.training_data = None
         self.cluster_models = {}  # For cluster-specific models
+        self.selected_gene_names = None
         
         print(f"CellDiffusion initialized on device: {self.device}")
     
@@ -191,12 +192,14 @@ class CellDiffusion:
             adata = self.preprocessed_adata
         
         # Convert to tensor format
-        data_tensor, cell_indices = adata_to_tensor(
+        data_tensor, cell_indices, gene_names = adata_to_tensor(
             adata,
             image_size=self.image_size,
             cluster_key=cluster_key,
             cluster_value=cluster_value
         )
+        # Persist gene names used for shaping tensor
+        self.selected_gene_names = gene_names
         
         print(f"Training on {data_tensor.shape[0]} cells")
         print(f"Data tensor shape: {data_tensor.shape}")
@@ -302,7 +305,7 @@ class CellDiffusion:
             ).to(self.device)
             
             # Prepare cluster-specific data
-            data_tensor, cell_indices = adata_to_tensor(
+            data_tensor, cell_indices, _ = adata_to_tensor(
                 adata,
                 image_size=self.image_size,
                 cluster_key=cluster_key,
@@ -405,12 +408,14 @@ class CellDiffusion:
             
             if use_original_data and self.preprocessed_adata is not None:
                 # Start from original data points
-                data_tensor, _ = adata_to_tensor(
+                data_tensor, _, gene_names = adata_to_tensor(
                     self.preprocessed_adata,
                     image_size=self.image_size,
                     cluster_key=cluster_key,
                     cluster_value=cluster_value
                 )
+                if self.selected_gene_names is None:
+                    self.selected_gene_names = gene_names
                 
                 if data_tensor.shape[0] > 0:
                     # Sample random subset
@@ -441,7 +446,8 @@ class CellDiffusion:
                 all_generated,
                 self.original_adata,
                 combine_with_original=True,
-                image_size=self.image_size
+                image_size=self.image_size,
+                gene_names=self.selected_gene_names
             )
         else:
             raise ValueError("No original AnnData available for postprocessing")
