@@ -89,7 +89,7 @@ def extract(a, t, x_shape):
         torch.Tensor: Extracted and reshaped values
     """
     batch_size = t.shape[0]
-    out = a.gather(-1, t.cpu())
+    out = a.gather(-1, t.to(a.device))
     return out.reshape(batch_size, *((1,) * (len(x_shape) - 1))).to(t.device)
 
 
