@@ -27,10 +27,10 @@ cd CellDiffusion
 pip install -e .
 ```
 
-### Using pip (when published)
+### Using pip
 
 ```bash
-pip install CellDiffusion
+pip install celldiff
 ```
 
 ## Quick Start
