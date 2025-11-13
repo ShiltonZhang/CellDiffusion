@@ -6,6 +6,8 @@ A Python package for generating virtual cells using diffusion models from single
 
 CellDiffusion provides a generalized implementation of diffusion models for single-cell RNA sequencing data. It allows users to generate synthetic virtual cells from AnnData objects, providing a powerful tool for data augmentation and synthetic cell generation in computational biology.
 
+For more details on the method, please see our preprint on **bioRxiv**: [https://www.biorxiv.org/content/10.1101/2025.10.27.684671v1](https://www.biorxiv.org/content/10.1101/2025.10.27.684671v1)
+
 ## Key Features
 
 - **Easy-to-use API**: Simple interface with AnnData input/output
